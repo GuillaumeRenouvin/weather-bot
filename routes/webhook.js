@@ -2,6 +2,7 @@ var express = require('express');
 var request = require('request');
 var router = express.Router();
 var google_key = 'AIzaSyDzNvC3fh6Fd54Z5DvdfchmxDe3YfAUBO0';
+var parser = require('json-parser');
 var weatherService = require('../server/weatherService');
 var userService = require('../server/userService');
 
