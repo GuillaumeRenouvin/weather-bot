@@ -1,6 +1,9 @@
 var express = require('express');
 var request = require('request');
 var router = express.Router();
+var google_key = 'AIzaSyDzNvC3fh6Fd54Z5DvdfchmxDe3YfAUBO0';
+var weatherService = require('../server/weatherService');
+var userService = require('../server/userService');
 
 router.get('/', function(req, res) {
   if (req.query['hub.mode'] === 'subscribe' &&
@@ -27,7 +30,19 @@ router.post('/', function (req, res) {
       // Iterate over each messaging event
       entry.messaging.forEach(function(event) {
         if (event.message) {
-          sendTextMessage(event.sender.id, event.message.text);
+          if(userService.isUserKnown(event.sender.id)) {
+            weatherService.getGeolocalisation(event.message.text).then(function(result) {
+              var obj = parser.parse(result);
+              var pos = obj.results[0].geometry.location;
+              weatherService.getWeatherForecast(pos.lat, pos.lng).then(function(result) {
+                res.send(result);
+              });
+            });
+          } else {
+            sendTextMessage(event.sender.id, 'Bienvenu !!!');
+            userService.addUser(event.sender.id, {'id': event.sender.id});
+          }
+
           receivedMessage(event);
         } else {
           console.log("Webhook received unknown event: ", event);
