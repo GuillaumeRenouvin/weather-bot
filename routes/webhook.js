@@ -1,5 +1,5 @@
 var express = require('express');
-var express = require('request');
+var request = require('request');
 var router = express.Router();
 
 router.get('/', function(req, res) {
@@ -27,6 +27,7 @@ router.post('/', function (req, res) {
       // Iterate over each messaging event
       entry.messaging.forEach(function(event) {
         if (event.message) {
+          sendTextMessage(event.sender.id, event.message.text);
           receivedMessage(event);
         } else {
           console.log("Webhook received unknown event: ", event);
@@ -64,7 +65,7 @@ function sendTextMessage(recipientId, messageText) {
 function callSendAPI(messageData) {
   request({
     uri: 'https://graph.facebook.com/v2.6/me/messages',
-    qs: { access_token: PAGE_ACCESS_TOKEN },
+    qs: { access_token: 'EAAcrHg9yDYMBALlkrsYfIZAtqCkmZAbWDFZCL0OaBZCZCKFRom8OedDtTJGVGaUoJmZCaQbcz2LN208fOXXPtSHeeY4HZBwYydc1vEZAIbpGhg1HF1uZCCfcCbTXokdIcYcGKDdVtqvkfWyz1sML3aw5FgaoDfzdXXOtAwrdUvOcZBHwZDZD' },
     method: 'POST',
     json: messageData
 
